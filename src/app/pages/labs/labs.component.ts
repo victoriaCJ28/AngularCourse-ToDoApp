@@ -10,22 +10,22 @@ import { CommonModule } from '@angular/common';
 })
 export class LabsComponent {
   welcome = "Bienvenido a mi primera aplicación";
-  tasks = [
+  tasks = signal( [
     'Instalar Angular CLI',
     'Crear proyecto',
     'Crear componentes',
     'Crear servicio'
-  ];
+  ]);
   name = signal('Victoria');
   age = 32;
   disabled: boolean = true;
   img = 'https://w3schools.com/howto/img_avatar.png';
 
-  person = {
+  person = signal({
     name: 'Victoria',
     age: 18,
     avatar: 'https://w3schools.com/howto/img_avatar.png'
-  }
+  });
   clickHandler(){
     alert('hola')
   }
@@ -41,5 +41,16 @@ export class LabsComponent {
     const input = event.target as HTMLInputElement;
     console.log(input.value);
   
+  }
+
+  changeAge(event: Event){
+    const input = event.target as HTMLInputElement;
+    const newValue = input.value;
+    this.person.update(prevState =>{
+      return{
+        ...prevState, 
+        age: parseInt(newValue, 10)
+      }
+    });
   }
 }
