@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, effect, Injector, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Task} from './../../models/task.model';
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -13,21 +13,21 @@ import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 })
 export class HomeComponent {
   tasks = signal<Task[]>([
-    {
-      id: Date.now(),
-      title: 'Crear Proyecto',
-      completed: false
-    },
-    {
-      id: Date.now(),
-      title: 'Crear Componentes',
-      completed: false
-    },
-    {
-      id: Date.now(),
-      title: 'Crear Servicio',
-      completed: false
-    },
+    // {
+    //   id: Date.now(),
+    //   title: 'Crear Proyecto',
+    //   completed: false
+    // },
+    // {
+    //   id: Date.now(),
+    //   title: 'Crear Componentes',
+    //   completed: false
+    // },
+    // {
+    //   id: Date.now(),
+    //   title: 'Crear Servicio',
+    //   completed: false
+    // },
    
   ]);
 //Estados computados en base a otros estados
@@ -60,6 +60,31 @@ export class HomeComponent {
   //   this.addTask(newTask);
 
   // }
+
+injector = inject(Injector)
+  constructor(){
+    //computed retorna, effect no
+    //Vigila cuando un estado cambia, y permite ejecutar una logica a partir de el
+
+  
+  }
+  ngOnInit(){
+    const storage = localStorage.getItem('tasks');
+    if (storage) {
+      const tasks = JSON.parse(storage);
+      this.tasks.set(tasks);
+    }
+    this.trackTasks();
+  }
+
+  trackTasks(){
+    effect(() => {
+      const tasks = this.tasks();
+      console.log('run effect');
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    },{ injector: this.injector});
+  }
 
   changeHandler(){  
     if (this.newTaskControl.valid){
